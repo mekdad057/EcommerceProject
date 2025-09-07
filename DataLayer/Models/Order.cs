@@ -16,12 +16,16 @@ namespace DataLayer.Models
     {
         public int Id { get; set; }
 
+        public int ClientId { get; set; }   
+
         public DateTime CreatedAt { get; set; }
 
         [BindNever]
         public OrderStatus Status { get; set; } 
 
         public ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
+        
+        public User Client { get; set; }
 
         [NotMapped]
         public decimal TotalPrice { 

@@ -1,6 +1,7 @@
 ﻿using ServiceLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models;
+using ServiceLayer.ParameterObjects;
 
 namespace ServiceLayer.Services
 {
@@ -40,9 +41,13 @@ namespace ServiceLayer.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Product>> GetAllProducts()
+        public async Task<IEnumerable<Product>> GetAllProducts(PaginationParams paginationParams)
         {
-            return await _context.Products.AsNoTracking().ToListAsync();
+            int pageNumber = paginationParams.PageNumber;
+            int pageSize = paginationParams.PageSize;
+            return await _context.Products.AsNoTracking()
+                                          .Skip((pageNumber -1)*pageSize).Take(pageSize)
+                                          .ToListAsync();
         }
 
         public async Task<Product> GetProductById(int id)

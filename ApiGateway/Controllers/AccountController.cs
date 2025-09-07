@@ -29,16 +29,16 @@ namespace ApiGateway.Controllers
         public async Task<IActionResult> SignUp([FromBody] UserDto model)
         {
             User user = _mapper.Map<User>(model);
-            var result = await _userManager.CreateAsync(user, model.Password);
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                var errors = result.Errors.Select(e => e.Description);
+                IEnumerable<string> errors = result.Errors.Select(e => e.Description);
                 return BadRequest(errors);
             }
-            var roleResult = await _userManager.AddToRoleAsync(user, "Client");
+            IdentityResult roleResult = await _userManager.AddToRoleAsync(user, "Client");
             if (!roleResult.Succeeded)
             {
-                var errors = roleResult.Errors.Select(e => e.Description);
+                IEnumerable<string> errors = roleResult.Errors.Select(e => e.Description);
                 return BadRequest(errors);
             }
             await _signInManager.SignInAsync(user, isPersistent: false);
@@ -49,7 +49,7 @@ namespace ApiGateway.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginByEmail([FromBody] string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            User? user = await _userManager.FindByEmailAsync(email);
             if (user == null)
                 return BadRequest("User Doesn't Exist");
             await _signInManager.SignInAsync(user, isPersistent: true);
@@ -73,7 +73,6 @@ namespace ApiGateway.Controllers
             UserDto dto = _mapper.Map<UserDto>(user); 
             return Ok(dto);
         }
-
-        
+                
     }
 }

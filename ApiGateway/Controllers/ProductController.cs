@@ -2,6 +2,7 @@
 using DataLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 using ServiceLayer.Interfaces;
+using ServiceLayer.ParameterObjects;
 
 namespace ApiGateway.Controllers
 {
@@ -16,15 +17,15 @@ namespace ApiGateway.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PaginationParams paginationParams)
         {
-            return Ok(await _productService.GetAllProducts());
+            return Ok(await _productService.GetAllProducts(paginationParams));
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var product = await _productService.GetProductById(id);
+            Product product = await _productService.GetProductById(id);
             return Ok(product);
         }
 

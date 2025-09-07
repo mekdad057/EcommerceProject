@@ -1,12 +1,15 @@
 ﻿using ServiceLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using DataLayer.Models;
+using Microsoft.AspNetCore.Identity;
+using ServiceLayer.ParameterObjects;
 
 namespace ServiceLayer.Services
 {
     public class OrderService : IOrderService
     {
         private readonly AppDbContext _context;
+        private readonly UserManager<User> _userManager;
 
         private Order CheckOrderExists(Order? order)
         {
@@ -17,14 +20,16 @@ namespace ServiceLayer.Services
             return order;
         }
 
-        public OrderService(AppDbContext context)
+        public OrderService(AppDbContext context, UserManager<User> manager)
         {
             _context = context;
+            _userManager = manager;
         }
 
-        public async Task<Order> AddOrder(OrderItem[] items)
+        public async Task<Order> AddOrder(int clientId, OrderItem[] items)
         {
-            var order = new Order();
+            Order order = new Order();
+            order.ClientId = clientId;
             order.CreatedAt = DateTime.Now;
             order.Status = OrderStatus.Processing;
             order.Items = items;
@@ -33,9 +38,14 @@ namespace ServiceLayer.Services
             return order;
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrders()
+        public async Task<IEnumerable<Order>> GetAllOrders(int clientId, PaginationParams paginationParams)
         {
-            return await _context.Orders.AsNoTracking().ToListAsync();
+            int pageSize = paginationParams.PageSize;
+            int pageNumber = paginationParams.PageNumber;
+            return await _context.Orders.AsNoTracking()
+                                        .Where(o => o.ClientId == clientId)
+                                        .Skip((pageNumber -1)*pageSize).Take(pageSize)
+                                        .ToListAsync();
         }
 
         public async Task<Order> GetOrderById(int id)
