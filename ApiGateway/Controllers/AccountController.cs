@@ -69,7 +69,7 @@ namespace ApiGateway.Controllers
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
-            User user = await _userManager.GetUserAsync(User);
+            User? user = await _userManager.GetUserAsync(User);
             UserDto dto = _mapper.Map<UserDto>(user); 
             return Ok(dto);
         }

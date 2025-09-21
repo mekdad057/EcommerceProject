@@ -20,8 +20,8 @@ namespace ApiGateway.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("{clientId}")]
-        public async Task<IActionResult> GetAllOrders(int clientId, [FromQuery] PaginationParams paginationParams)
+        [HttpGet("client/{clientId}")]
+        public async Task<IActionResult> GetAllOrders(string clientId, [FromQuery] PaginationParams paginationParams)
         {
             return Ok(await _orderService.GetAllOrders(clientId, paginationParams));
         }
@@ -34,7 +34,7 @@ namespace ApiGateway.Controllers
         }
 
         [HttpPost()]
-        public async Task<IActionResult> CreateOrder(int clientId, OrderItemDto[] items)
+        public async Task<IActionResult> CreateOrder(string clientId, OrderItemDto[] items)
         {
             OrderItem[] orderItems = _mapper.Map<OrderItem[]>(items);
             var order = await _orderService.AddOrder(clientId, orderItems);

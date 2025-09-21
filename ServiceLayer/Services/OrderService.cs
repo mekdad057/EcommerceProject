@@ -26,7 +26,7 @@ namespace ServiceLayer.Services
             _userManager = manager;
         }
 
-        public async Task<Order> AddOrder(int clientId, OrderItem[] items)
+        public async Task<Order> AddOrder(string clientId, OrderItem[] items)
         {
             Order order = new Order();
             order.ClientId = clientId;
@@ -38,7 +38,7 @@ namespace ServiceLayer.Services
             return order;
         }
 
-        public async Task<IEnumerable<Order>> GetAllOrders(int clientId, PaginationParams paginationParams)
+        public async Task<IEnumerable<Order>> GetAllOrders(string clientId, PaginationParams paginationParams)
         {
             int pageSize = paginationParams.PageSize;
             int pageNumber = paginationParams.PageNumber;
